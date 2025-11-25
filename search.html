@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Поиск музыки</title>
+<style>
+  body {
+    background: radial-gradient(circle at 20% 30%, #021027, #000814 85%);
+    color: #fff;
+    font-family: "Segoe UI", Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 40px 20px;
+  }
+
+  h2 {
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(64, 192, 255, 0.8);
+  }
+
+  #searchBox {
+    width: 90%;
+    max-width: 400px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid rgba(64, 192, 255, 0.7);
+    background: rgba(10, 20, 40, 0.7);
+    color: #fff;
+    font-size: 1em;
+    margin-bottom: 30px;
+    outline: none;
+    box-shadow: 0 0 15px rgba(64, 192, 255, 0.6);
+  }
+
+  .track-list {
+    max-width: 600px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .track-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(20, 30, 60, 0.3);
+    border: 2px solid rgba(64, 192, 255, 0.6);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 0 15px rgba(64, 192, 255, 0.7);
+  }
+
+  .track-card img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    margin-right: 15px;
+  }
+
+  .track-left {
+    display: flex;
+    align-items: center;
+    text-align: left;
+  }
+
+  .track-info h3 {
+    margin: 0;
+    font-size: 1.1em;
+  }
+
+  .track-info p {
+    margin: 3px 0 0;
+    font-size: 0.9em;
+    opacity: 0.8;
+  }
+
+  .play-btn {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 2px solid rgba(64, 192, 255, 0.9);
+    background: rgba(20, 30, 60, 0.8);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  #back {
+    margin-top: 30px;
+    padding: 12px 25px;
+    font-size: 1em;
+    background: rgba(20, 30, 60, 0.8);
+    border: 2px solid rgba(64, 192, 255, 0.9);
+    border-radius: 18px;
+    color: #fff;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h2>🔍 Поиск музыки</h2>
+
+<input type="text" id="searchBox" placeholder="Введите название или исполнителя...">
+
+<div class="track-list" id="trackList"></div>
+
+<button id="back">⬅ Вернуться</button>
+
+<audio id="audio" style="display:none;"></audio>
+
+<script>
+  const searchBox = document.getElementById("searchBox");
+  const trackList = document.getElementById("trackList");
+  const audio = document.getElementById("audio");
+
+  const allTracks = [
+    { title: "Ava", artist: "Famy", src: "music/FAMY - Ava.mp3", cover: "covers/ava.jpeg" },
+    { title: "Pink + White", artist: "Frank Ocean", src: "music/Frank Ocean - Pink & White.mp3", cover: "covers/pink.jpeg" },
+    { title: "Wicked Game", artist: "Chris Isaak", src: "music/Chris Isaak - Wicked Game (Remastered).mp3", cover: "covers/wicked.jpeg" },
+    { title: "City of Stars", artist: "Ryan Gosling & Emma Stone", src: "music/Ryan Gosling & Emma Stone - City of Stars (OST La La Land).mp3", cover: "covers/city.jpeg" },
+    { title: "Садагам", artist: "Каныкей", src: "music/Каныкей - Садагам (.org).mp3", cover: "covers/садагам.jpg" },
+    { title: "The Usual", artist: "Shannon Jae Prior", src: "music/Shannon Jae Prior - The Usual (OST Мажор 3).mp3", cover: "covers/theusual.jpg" },
+    { title: "Bonnie and Clyde", artist: "Brigitte Bardot", src: "music/Brigitte Bardot - Bonnie and Clyde.mp3", cover: "covers/bonnieandclyde.jpg" },
+    { title: "Sweet Dreams", artist: "Eurythmics", src: "music/Eurythmics - Sweet Dreams.mp3", cover: "covers/sweetdreams.jpg" },
+    { title: "Love", artist: "Lana Del Rey", src: "music/Lana Del Rey - Love (1).mp3", cover: "covers/love.jpg" },
+    { title: "California Dreaming", artist: "The Mamas & The Papas", src: "music/The Mamas & The Papas - California Dreaming.mp3", cover: "covers/california.jpg" },
+    { title: "We Don't Talk Anymore", artist: "Charlie Puth feat Selena Gomez", src: "music/Charlie Puth feat Selena Gomez - We Don't Talk Anymore.mp3", cover: "covers/wedont.jpg" },
+    { title: "Ma Meilleure Ennemie", artist: "Stromae & Pomme", src: "music/Stromae & Pomme - Ma Meilleure Ennemie.mp3", cover: "covers/ennemie.jpg" },
+    { title: "Its ok", artist: "Tom Rosenthal", src: "music/Tom Rosenthal - Its ok.mp3", cover: "covers/itsok.jpg" },
+    { title: "Сердце", artist: "passmurny", src: "music/passmurny - Сердце.mp3", cover: "covers/сердце.jpg" },
+    { title: "Стыцамэн", artist: "Иван Дорн", src: "music/Иван Дорн - Стыцамэн.mp3", cover: "covers/иван.jpg" },
+    { title: "Born to Die", artist: "Lana Del Rey", src: "music/Lana Del Rey - Born to Die.mp3", cover: "covers/borntodie.jpg" },
+    { title: "NBA", artist: "Rsac", src: "music/Rsac - NBA.mp3", cover: "covers/nba.jpg" },
+    { title: "505", artist: "Arctic Monkeys", src: "music/Arctic Monkeys - 505.mp3", cover: "covers/505.jpg" },
+    { title: "Tous Les Memes", artist: "Stromae", src: "music/Stromae - Tous Les Memes.mp3", cover: "covers/stromae.jpg" },
+    { 
+  title: "Reserved seat (musmore.org)", 
+  artist: "Hyukoh", 
+  src: "music/Hyukoh_-_Reserved_seat__(musmore.org).mp3", 
+  cover: "covers/reserved.jpg" 
+},
+  { title: "She's My Collar", artist: "Gorillaz", src: "music/Gorillaz - She's My Collar.mp3", cover: "covers/gorillaz.jpg" },
+  { title: "Vermissen", artist: "Juju ft. Henning May", src: "music/Juju ft. Henning May - Vermissen.mp3", cover: "covers/vermissen.jpg" },
+  { title: "The Last Day", artist: "Moby feat. Skylar Grey & Darlingside", src: "music/Moby feat. Skylar Grey & Darlingside - The Last Day.mp3", cover: "covers/day.jpg" },
+    { title: "Sea Lion", artist: "Sage Francis", src: "music/Sage Francis - Sea Lion.mp3", cover: "covers/sealion.jpg" }
+  ];
+
+  function renderTracks(list) {
+    trackList.innerHTML = "";
+
+    if (list.length === 0) {
+      trackList.innerHTML = "<p>Ничего не найдено 😔</p>";
+      return;
+    }
+
+    list.forEach((track, i) => {
+      const card = document.createElement("div");
+      card.className = "track-card";
+
+      card.innerHTML = `
+        <div class="track-left">
+          <img src="${track.cover}">
+          <div class="track-info">
+            <h3>${track.title}</h3>
+            <p>${track.artist}</p>
+          </div>
+        </div>
+        <button class="play-btn" onclick="playTrack('${track.src}')">▶</button>
+      `;
+
+      trackList.appendChild(card);
+    });
+  }
+
+  function playTrack(src) {
+    audio.src = src;
+    audio.play();
+  }
+
+  renderTracks(allTracks);
+
+  searchBox.addEventListener("input", () => {
+    const q = searchBox.value.toLowerCase();
+
+    const result = allTracks.filter(track =>
+      track.title.toLowerCase().includes(q) ||
+      track.artist.toLowerCase().includes(q)
+    );
+
+    renderTracks(result);
+  });
+
+  document.getElementById("back").onclick = () => {
+    window.location.href = "index.html";
+  };
+</script>
+
+</body>
+</html>

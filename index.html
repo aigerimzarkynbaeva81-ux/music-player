@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Музыкальный плеер</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+    background: #04132d; /* синий фон */
+    color: #ffffff;
+  }
+
+  .player {
+    background: #04112b; /* синий плеер */
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  }
+
+  img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: transform 0.5s linear;
+  }
+
+  img.rotate {
+    animation: rotate 10s linear infinite;
+  }
+
+  @keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .controls {
+    margin: 10px 0;
+  }
+
+  button {
+    padding: 5px 10px;
+    margin: 2px;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background: #06325d;
+    color: #fff;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+
+  button:hover {
+    background: #074361;
+    transform: scale(1.05);
+  }
+
+  input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 6px;
+    background: #a3a1a1;
+    border-radius: 5px;
+    outline: none;
+    margin-top: 10px;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #639ad2;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    transition: all 0.3s;
+  }
+
+  input[type=range]::-webkit-slider-thumb:hover {
+    background: #226d93;
+    transform: scale(1.2);
+  }
+
+  #go-playlist, #go-current, #go-favorites, #go-search, #go-artists {
+    margin-top: 10px;
+    background: #4e87c1;
+    color: #fff;
+    width: 100%;
+    font-size: 1em;
+  }
+
+  #go-playlist:hover, #go-current:hover, #go-favorites:hover, #go-search:hover, #go-artists:hover {
+    background: #124e6b;
+    transform: translateY(-2px);
+  }
+</style>
+</head>
+<body>
+<div class="player">
+  <h2>🎵 Music </h2>
+  <img id="cover" src="covers/pink.jpeg" alt="Обложка">
+  <h3 id="title">Название песни</h3>
+  <p id="artist">Исполнитель</p>
+  <audio id="audio"></audio>
+
+ <div class="controls">
+  <button id="prev" class="top-round" type="button">⏮</button>
+  <button id="play" class="top-round" type="button">▶</button>
+  <button id="next" class="top-round" type="button">⏭</button>
+  <button id="repeat" class="top-round" type="button">🔁</button>  <!-- поворот -->
+  <button id="shuffle" class="top-round" type="button">🔀</button> <!-- перемешать -->
+  <button id="mute" class="top-round" type="button">🔇</button>    <!-- беззвук -->
+  <input type="range" id="volume" min="0" max="1" value="1" step="0.01">
+</div>
+
+  <input type="range" id="progress" value="0" min="0" max="100">
+
+  <button id="go-playlist">📂 Мой плейлист</button>
+<button id="go-current">🎶 Текущие треки</button>
+<button id="go-favorites">💙 Избранное</button>
+<button id="go-search">🔍 Поиск</button>
+<button id="go-artists">👤 Исполнители</button>
+
+
+</div>
+
+<script src="script.js"></script>
+<script>
+  // Переход на страницу плейлистов
+  document.getElementById('go-playlist').addEventListener('click', () => {
+    window.location.href = "playlist.html";
+  });
+
+  // Переход на страницу текущих треков
+  document.getElementById('go-current').addEventListener('click', () => {
+    window.location.href = "current.html";
+  });
+
+  // Переход на страницу избранного
+  document.getElementById('go-favorites').addEventListener('click', () => {
+    window.location.href = "favorites.html";
+  });
+
+  // Переход на страницу поиска
+  document.getElementById('go-search').addEventListener('click', () => {
+    window.location.href = "search.html";
+  });
+
+  // Переход на страницу исполнителей
+  document.getElementById('go-artists').addEventListener('click', () => {
+    window.location.href = "artists.html";
+  });
+</script>
+</body>
+</html>

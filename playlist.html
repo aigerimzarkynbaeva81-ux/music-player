@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мой Плейлист</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: radial-gradient(circle at 20% 30%, #020b1d, #000614 85%);
+    color: #fff;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 28px;
+    text-shadow:
+      0 0 12px rgba(64, 192, 255, 0.9),
+      0 0 25px rgba(64, 128, 255, 0.8);
+  }
+
+  .playlist-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 22px;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .song-card {
+    background: rgba(15, 25, 50, 0.6);
+    border-radius: 18px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    border: 2px solid rgba(64, 128, 255, 0.4);
+    box-shadow:
+      0 0 25px rgba(64, 128, 255, 0.25),
+      inset 0 0 12px rgba(20, 40, 90, 0.5);
+
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    backdrop-filter: blur(12px);
+  }
+
+  .song-card:hover {
+    transform: scale(1.06);
+    box-shadow:
+      0 0 35px rgba(64, 192, 255, 0.9),
+      inset 0 0 18px rgba(40, 80, 150, 0.7);
+  }
+
+  .song-card img {
+    width: 100%;
+    border-radius: 14px;
+    margin-bottom: 10px;
+
+    box-shadow:
+      0 0 25px rgba(64, 128, 255, 0.8),
+      0 0 45px rgba(32, 64, 150, 0.7);
+  }
+
+  .song-info {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .song-info h3 {
+    margin: 5px 0;
+    font-size: 1.15em;
+    text-shadow: 0 0 8px rgba(64, 192, 255, 0.8);
+  }
+
+  .song-info p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #bcd8ff;
+  }
+
+  .song-actions button {
+    margin: 6px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+
+    background: linear-gradient(180deg, #1d3b75, #0d1a36);
+    border: 2px solid rgba(64, 192, 255, 0.9);
+    color: #fff;
+    font-weight: bold;
+
+    box-shadow:
+      0 4px 0 #0a1228,
+      0 0 12px rgba(64, 192, 255, 0.9),
+      inset 0 0 10px rgba(64, 128, 255, 0.6);
+
+    transition: 0.3s ease;
+  }
+
+  .song-actions button:hover {
+    transform: translateY(-3px) scale(1.08);
+    box-shadow:
+      0 6px 0 #060a1a,
+      0 0 28px rgba(64, 192, 255, 1),
+      inset 0 0 16px rgba(64, 128, 255, 0.9);
+  }
+
+  #audio {
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 10px;
+    background: #0a162e;
+    box-shadow: 0 0 20px rgba(64, 128, 255, 0.5);
+  }
+
+  #back {
+    margin-top: 20px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 14px;
+
+    background: linear-gradient(180deg, #1d3b75, #0a162e);
+    border: 2px solid rgba(64, 192, 255, 0.9);
+
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+
+    box-shadow:
+      0 5px 0 #060a1a,
+      0 0 20px rgba(64, 192, 255, 0.9),
+      inset 0 0 12px rgba(64, 128, 255, 0.6);
+
+    transition: 0.3s ease;
+  }
+
+  #back:hover {
+    transform: translateY(-4px) scale(1.08);
+    box-shadow:
+      0 8px 0 #040710,
+      0 0 35px rgba(64, 192, 255, 1),
+      inset 0 0 18px rgba(64, 128, 255, 0.9);
+  }
+</style>
+
+</head>
+<body>
+
+<h2>📂 Мой Плейлист</h2>
+<div class="playlist-container" id="playlistContainer">
+  <!-- Песни подгружаются через JS -->
+</div>
+
+<audio id="audio" controls></audio>
+<button id="back">⬅ Вернуться к плееру</button>
+
+<script>
+  const playlistContainer = document.getElementById('playlistContainer');
+  const audio = document.getElementById('audio');
+  const backBtn = document.getElementById('back');
+
+  function loadPlaylist() {
+    const playlist = JSON.parse(localStorage.getItem('myPlaylist')) || [];
+    playlistContainer.innerHTML = '';
+
+    if (playlist.length === 0) {
+      playlistContainer.innerHTML = '<p style="text-align:center; width:100%;">Плейлист пустой 😔</p>';
+      return;
+    }
+
+    playlist.forEach((song, index) => {
+      const card = document.createElement('div');
+      card.classList.add('song-card');
+
+      card.innerHTML = `
+        <img src="${song.cover}" alt="${song.title}">
+        <div class="song-info">
+          <h3>${song.title}</h3>
+          <p>${song.artist}</p>
+        </div>
+        <div class="song-actions">
+          <button onclick="playSong(${index})">▶ Играть</button>
+          <button onclick="removeSong(${index})">🗑 Удалить</button>
+        </div>
+      `;
+      playlistContainer.appendChild(card);
+    });
+  }
+
+  function playSong(index) {
+    const playlist = JSON.parse(localStorage.getItem('myPlaylist')) || [];
+    const song = playlist[index];
+    audio.src = song.src;
+    audio.play();
+  }
+
+  function removeSong(index) {
+    let playlist = JSON.parse(localStorage.getItem('myPlaylist')) || [];
+    playlist.splice(index, 1);
+    localStorage.setItem('myPlaylist', JSON.stringify(playlist));
+    loadPlaylist();
+  }
+
+  backBtn.addEventListener('click', () => {
+    window.location.href = 'index.html';
+  });
+
+  loadPlaylist();
+</script>
+
+</body>
+</html>

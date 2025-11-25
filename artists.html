@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Исполнители</title>
+<style>
+/* === BODY === */
+body {
+  font-family: Arial, sans-serif;
+  background: #04132d; /* тёмный синий фон */
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* === ЗАГОЛОВОК === */
+h2 {
+  margin-bottom: 30px;
+  font-size: 28px;
+  text-shadow: 0 0 10px #33c0ff, 0 0 20px #1a8cff; /* неоновый эффект */
+  animation: fadeInText 1s ease forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInText {
+  to { opacity: 1; }
+}
+
+/* === СПИСОК ИСПОЛНИТЕЛЕЙ === */
+.artist-list {
+  width: 100%;
+  max-width: 400px;
+  background: #04112b;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 30px rgba(51, 192, 255, 0.5); /* неоновая тень */
+}
+
+/* === КАРТОЧКА ИСПОЛНИТЕЛЯ === */
+.artist {
+  background: #06325d;
+  padding: 12px 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  transition: 0.3s ease, box-shadow 0.3s ease;
+  text-shadow: 0 0 5px #33c0ff;
+}
+
+.artist:hover {
+  background: #074361;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 0 15px #33c0ff, 0 0 30px #1a8cff;
+}
+
+/* === КНОПКА НАЗАД === */
+#back {
+  margin-top: 25px;
+  background: #4e87c1;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 1em;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 0 10px #33c0ff, 0 0 20px #1a8cff;
+  transition: all 0.3s ease;
+}
+
+#back:hover {
+  background: #124e6b;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #33c0ff, 0 0 40px #1a8cff;
+}
+
+/* === АНИМАЦИЯ ПРИ ВОЗНИКНОВЕНИИ === */
+.artist {
+  opacity: 0;
+  animation: fadeInArtist 0.5s ease forwards;
+}
+
+.artist:nth-child(1) { animation-delay: 0.1s; }
+.artist:nth-child(2) { animation-delay: 0.2s; }
+.artist:nth-child(3) { animation-delay: 0.3s; }
+.artist:nth-child(4) { animation-delay: 0.4s; }
+.artist:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes fadeInArtist {
+  to { opacity: 1; }
+}
+</style>
+</head>
+<body>
+  <h2>👤 Исполнители</h2>
+  <div class="artist-list" id="artistList"></div>
+  <button id="back">⬅ Назад</button>
+
+<script>
+const songs = [
+  { title: "Ava", artist: "Famy" },
+  { title: "Pink + White", artist: "Frank Ocean" },
+  { title: "Wicked Game", artist: "Chris Isaak" },
+  { title: "City of Stars", artist: "Ryan Gosling & Emma Stone" },
+  { title: "Садагам", artist: "Каныкей" },
+  { title: "Сердце", artist: "passmurny" },
+  { title: "Reserved seat (musmore.org)", artist: "Hyukoh" },
+  { title: "Стыцамэн", artist: "Иван Дорн" },
+  { title: "NBA", artist: "Rsac" },
+  { title: "Sea Lion", artist: "Sage Francis" },
+  { title: "The Usual", artist: "Shannon Jae Prior" },
+  { title: "Bonnie and Clyde", artist: "Brigitte Bardot" },
+  { title: "Sweet Dreams", artist: "Eurythmics" },
+  { title: "Love", artist: "Lana Del Rey" },
+  { title: "Ma Meilleure Ennemie", artist: "Stromae & Pomme" },
+  { title: "Its ok", artist: "Tom Rosenthal" },
+  { title: "505", artist: "Arctic Monkeys" },
+  { title: "She's My Collar", artist: "Gorillaz" },
+  { title: "Vermissen", artist: "Juju ft. Henning May" },
+  { title: "The Last Day", artist: "Moby feat. Skylar Grey & Darlingside" },
+  { title: "California Dreaming", artist: "The Mamas & The Papas" },
+  { title: "Born to Die", artist: "Lana Del Rey" },
+  { title: "Tous Les Memes", artist: "Stromae" },
+  { title: "We Don't Talk Anymore", artist: "Charlie Puth feat Selena Gomez" }
+];
+
+// получаем уникальные имена исполнителей
+let artists = [...new Set(songs.map(s => s.artist))];
+
+const artistListDiv = document.getElementById("artistList");
+
+artists.forEach(artist => {
+  const div = document.createElement("div");
+  div.className = "artist";
+  div.textContent = artist;
+
+  // переход на страницу конкретного исполнителя
+  div.onclick = () => {
+    window.location.href = `artist.html?name=${encodeURIComponent(artist)}`;
+  };
+
+  artistListDiv.appendChild(div);
+});
+
+document.getElementById("back").onclick = () => {
+  window.location.href = "index.html";
+};
+</script>
+</body>
+</html>

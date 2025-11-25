@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Избранное</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body {
+    background: radial-gradient(circle at 20% 30%, #021027, #000814 85%);
+    color: #fff;
+    font-family: "Segoe UI", Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 40px 20px;
+  }
+
+  h2 {
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px #40c0ff, 0 0 20px #4080ff;
+  }
+
+  .track-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+    margin: auto;
+  }
+
+  .track-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(20, 30, 60, 0.3);
+    border: 2px solid rgba(31, 81, 107, 0.6);
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 0 20px rgba(21, 92, 128, 0.7), inset 0 0 10px rgba(64,128,255,0.5);
+  }
+
+  .track-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .track-card img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+  }
+
+  .track-info h3, .track-info p {
+    margin: 0;
+  }
+
+  .remove-btn {
+    padding: 6px 10px;
+    background: rgba(255, 50, 50, 0.8);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  #back {
+    margin-top: 30px;
+    padding: 12px 25px;
+    font-size: 1em;
+    background: rgba(20,30,60,0.8);
+    border: 2px solid rgba(7, 52, 74, 0.9);
+    border-radius: 18px;
+    color: #fff;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<h2>💙 Избранное</h2>
+<div class="track-list" id="favoritesList"></div>
+<button id="back">⬅ Вернуться к плееру</button>
+
+<script>
+  const favoritesListEl = document.getElementById('favoritesList');
+  const backBtn = document.getElementById('back');
+
+  // Получаем избранное из localStorage
+  const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+  if(favorites.length === 0){
+    favoritesListEl.innerHTML = '<p>Нет избранных треков 😔</p>';
+  } else {
+    favorites.forEach((track, index) => {
+      const card = document.createElement('div');
+      card.classList.add('track-card');
+      card.innerHTML = `
+        <div class="track-left">
+          <img src="${track.cover}" alt="${track.title}">
+          <div class="track-info">
+            <h3>${track.title}</h3>
+            <p>${track.artist}</p>
+          </div>
+        </div>
+        <button class="remove-btn" onclick="removeFavorite(${index})">❌ Убрать</button>
+      `;
+      favoritesListEl.appendChild(card);
+    });
+  }
+
+  function removeFavorite(index) {
+    favorites.splice(index, 1);
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    location.reload();
+  }
+
+  backBtn.addEventListener('click', () => {
+    window.location.href = 'index.html';
+  });
+</script>
+</body>
+</html>

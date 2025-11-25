@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Исполнитель</title>
+<style>
+/* === BODY === */
+body {
+  background: #04132d; /* тёмный синий фон */
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+/* === ИМЯ ИСПОЛНИТЕЛЯ === */
+h2#artistName {
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 24px;
+  text-align: center;
+  text-shadow: 0 0 10px #33c0ff, 0 0 20px #1a8cff; /* неоновый текст */
+}
+
+/* === ОБЛОЖКА === */
+#artistCover {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-bottom: 15px;
+  transition: transform 0.5s linear, box-shadow 0.5s ease;
+  box-shadow: 0 0 15px #33c0ff, 0 0 30px #1a8cff; /* неоновый свет вокруг */
+}
+
+#artistCover.rotate {
+  animation: rotate 10s linear infinite;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* === СПИСОК ПЕСЕН === */
+.track-list {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.track-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #04112b;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 0 5px #33c0ff, inset 0 0 3px #1a8cff;
+}
+
+.track-card:hover {
+  background: #06325d;
+  transform: scale(1.02);
+  box-shadow: 0 0 15px #33c0ff, inset 0 0 7px #1a8cff;
+}
+
+/* === Текст песни === */
+.track-info h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 0 0 5px #33c0ff;
+}
+
+.track-info p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.8;
+  text-shadow: 0 0 3px #1a8cff;
+}
+
+/* === Кнопки песен === */
+button.play-btn,
+button.add-playlist-btn,
+button.favorite-btn,
+#back {
+  background: #06325d;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 0 5px #33c0ff, inset 0 0 3px #1a8cff;
+}
+
+button.play-btn:hover,
+button.add-playlist-btn:hover,
+button.favorite-btn:hover,
+#back:hover {
+  background: #074361;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #33c0ff, inset 0 0 10px #1a8cff;
+}
+</style>
+</head>
+<body>
+
+<h2 id="artistName">Исполнитель</h2>
+<img id="artistCover" src="covers/pink.jpeg" alt="Фото исполнителя">
+
+<div class="track-list" id="trackList"></div>
+
+<button id="back">⬅ Назад</button>
+
+<audio id="audio" style="display:none;"></audio>
+
+<script>
+const songs = [
+  { title: "Ava", artist: "Famy", src: "music/FAMY - Ava.mp3", cover: "covers/ava.jpeg" },
+  { title: "Pink + White", artist: "Frank Ocean", src: "music/Frank Ocean - Pink & White.mp3", cover: "covers/pink.jpeg" },
+  { title: "Wicked Game", artist: "Chris Isaak", src: "music/Chris Isaak - Wicked Game (Remastered).mp3", cover: "covers/wicked.jpeg" },
+  { title: "City of Stars", artist: "Ryan Gosling & Emma Stone", src: "music/Ryan Gosling & Emma Stone - City of Stars (OST La La Land).mp3", cover: "covers/city.jpeg" },
+  { title: "Садагам", artist: "Каныкей", src: "music/Каныкей - Садагам (.org).mp3", cover: "covers/садагам.jpg" },
+  { title: "Сердце", artist: "passmurny", src: "music/passmurny - Сердце.mp3", cover: "covers/сердце.jpg" },
+  { title: "Reserved seat (musmore.org)", artist: "Hyukoh", src: "music/Hyukoh_-_Reserved_seat__(musmore.org).mp3", cover: "covers/reserved.jpg" },
+  { title: "Стыцамэн", artist: "Иван Дорн", src: "music/Иван Дорн - Стыцамэн.mp3", cover: "covers/иван.jpg" },
+  { title: "NBA", artist: "Rsac", src: "music/Rsac - NBA.mp3", cover: "covers/nba.jpg" },
+  { title: "Sea Lion", artist: "Sage Francis", src: "music/Sage Francis - Sea Lion.mp3", cover: "covers/sealion.jpg" },
+  { title: "The Usual", artist: "Shannon Jae Prior", src: "music/Shannon Jae Prior - The Usual (OST Мажор 3).mp3", cover: "covers/theusual.jpg" },
+  { title: "Bonnie and Clyde", artist: "Brigitte Bardot", src: "music/Brigitte Bardot - Bonnie and Clyde.mp3", cover: "covers/bonnieandclyde.jpg" },
+  { title: "Sweet Dreams", artist: "Eurythmics", src: "music/Eurythmics - Sweet Dreams.mp3", cover: "covers/sweetdreams.jpg" },
+  { title: "Love", artist: "Lana Del Rey", src: "music/Lana Del Rey - Love (1).mp3", cover: "covers/love.jpg" },
+  { title: "Ma Meilleure Ennemie", artist: "Stromae & Pomme", src: "music/Stromae & Pomme - Ma Meilleure Ennemie.mp3", cover: "covers/ennemie.jpg" },
+  { title: "Its ok", artist: "Tom Rosenthal", src: "music/Tom Rosenthal - Its ok.mp3", cover: "covers/itsok.jpg" },
+  { title: "505", artist: "Arctic Monkeys", src: "music/Arctic Monkeys - 505.mp3", cover: "covers/505.jpg" },
+  { title: "Tous Les Memes", artist: "Stromae", src: "music/Stromae - Tous Les Memes.mp3", cover: "covers/stromae.jpg" },
+  { title: "She's My Collar", artist: "Gorillaz", src: "music/Gorillaz - She's My Collar.mp3", cover: "covers/gorillaz.jpg" },
+  { title: "Vermissen", artist: "Juju ft. Henning May", src: "music/Juju ft. Henning May - Vermissen.mp3", cover: "covers/vermissen.jpg" },
+  { title: "The Last Day", artist: "Moby feat. Skylar Grey & Darlingside", src: "music/Moby feat. Skylar Grey & Darlingside - The Last Day.mp3", cover: "covers/day.jpg" },
+  { title: "California Dreaming", artist: "The Mamas & The Papas", src: "music/The Mamas & The Papas - California Dreaming.mp3", cover: "covers/california.jpg" },
+  { title: "Born to Die", artist: "Lana Del Rey", src: "music/Lana Del Rey - Born to Die.mp3", cover: "covers/borntodie.jpg" },
+  { title: "We Don't Talk Anymore", artist: "Charlie Puth feat Selena Gomez", src: "music/Charlie Puth feat Selena Gomez - We Don't Talk Anymore.mp3", cover: "covers/wedont.jpg" }
+];
+
+// получаем имя артиста из URL
+const urlParams = new URLSearchParams(window.location.search);
+const artistName = urlParams.get('name');
+
+const artistTitle = document.getElementById("artistName");
+const artistCover = document.getElementById("artistCover");
+const trackList = document.getElementById("trackList");
+const audio = document.getElementById("audio");
+
+artistTitle.textContent = artistName || "Исполнитель";
+
+// фильтруем песни артиста
+const artistSongs = songs.filter(s => s.artist === artistName);
+
+// если есть песни — ставим обложку
+if (artistSongs.length > 0) {
+  artistCover.src = artistSongs[0].cover;
+}
+
+// рендерим песни
+artistSongs.forEach(song => {
+  const card = document.createElement("div");
+  card.className = "track-card";
+
+  card.innerHTML = `
+    <div class="track-info">
+      <h3>${song.title}</h3>
+      <p>${song.artist}</p>
+    </div>
+    <div>
+      <button class="play-btn">▶</button>
+      <button class="add-playlist-btn">📂</button>
+      <button class="favorite-btn">🤍</button>
+    </div>
+  `;
+
+  // кнопка воспроизведения
+  card.querySelector(".play-btn").onclick = () => {
+    audio.src = song.src;
+    audio.play();
+  };
+
+  // кнопка добавления в плейлист
+  card.querySelector(".add-playlist-btn").onclick = () => {
+    let playlist = JSON.parse(localStorage.getItem('myPlaylist')) || [];
+    if (!playlist.find(s => s.src === song.src)) {
+      playlist.push(song);
+      localStorage.setItem('myPlaylist', JSON.stringify(playlist));
+      alert(`${song.title} добавлена в плейлист!`);
+    } else alert(`${song.title} уже в плейлисте!`);
+  };
+
+  // кнопка избранного
+  const favBtn = card.querySelector(".favorite-btn");
+  favBtn.onclick = () => {
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    if (!favorites.find(f => f.title === song.title && f.artist === song.artist)) {
+      favorites.push(song);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      favBtn.textContent = "❤️";
+      alert(`${song.title} добавлен в избранное!`);
+    } else alert(`${song.title} уже в избранном!`);
+  };
+
+  trackList.appendChild(card);
+});
+
+// кнопка назад
+document.getElementById("back").onclick = () => {
+  window.location.href = "artists.html";
+};
+</script>
+
+</body>
+</html>
